@@ -32,6 +32,38 @@ gitops = module('automatic-release-git')
 promotion = module('promote-encrypted-candidate')
 image_pattern = re.compile(r'^192\.168\.86\.100:30500/shirone/(cms|ssr)@sha256:[0-9a-f]{64}$')
 
+# One reviewed transition changes only how the same pinned base is selected.
+# Keep exact Git object identities so this is not a general exemption for
+# future reconstruction changes. See deploy/ci/BASE-COMPATIBILITY.md.
+REVIEWED_BASELINE = '2f430442387b2db6277f0e7c29f7c33327e8e35c'
+REVIEWED_TRANSITION = 'f78b7bd3c38d6f19168a9d6fe38994af761ecc1e'
+REVIEWED_BASE_FILES = {
+    'deploy/ci/Dockerfile.node-reconstruction-candidate': (
+        'e39c7145a015572c44ce925cbb18b72ae7904b7d',
+        '1ed1f3c903009b3b7750d5e9ee89d1123f17d4d0'),
+    'deploy/ci/rebuild-hosted-bases-candidate.sh': (
+        'c4920fd935d061e1ea5eabfec68b8d517e7c96bd',
+        'ca396b7da476839f54eb8909ad57897f238de305'),
+    'deploy/ci/pull-hosted-base.sh': (None, 'e968db1c8c0327d3e6d458dee6f7cb50aea83785'),
+}
+
+
+def reviewed_base_transition(git, previous, source, changed):
+    if previous != REVIEWED_BASELINE or set(changed) != set(REVIEWED_BASE_FILES):
+        return False
+    try:
+        git('merge-base', '--is-ancestor', REVIEWED_TRANSITION, source)
+        for path, (old, new) in REVIEWED_BASE_FILES.items():
+            if old is not None and git('rev-parse', f'{previous}:{path}') != old:
+                return False
+            if old is None and git('ls-tree', previous, '--', path):
+                return False
+            if git('rev-parse', f'{source}:{path}') != new:
+                return False
+    except subprocess.SubprocessError:
+        return False
+    return True
+
 
 def command(*args, cwd=None, env=None):
     return subprocess.run(args, cwd=cwd, env=env, check=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True).stdout
@@ -162,8 +194,10 @@ class Adapter:
                             'deploy/ci/build-tested-oci-candidate.sh',
                             'deploy/ci/build-encrypted-release-candidate.sh',
                             'deploy/ci/rebuild-hosted-bases-candidate.sh',
-                            'deploy/ci/Dockerfile.node-reconstruction-candidate')
-        if changed:
+                            'deploy/ci/Dockerfile.node-reconstruction-candidate',
+                            'deploy/ci/pull-hosted-base.sh')
+        if changed and not reviewed_base_transition(self._git, previous['source'],
+                                                    admission['source'], changed.splitlines()):
             raise ValueError('CMS changed; automatic rollback compatibility is not established')
         components = {name: self._live(name) for name in ('cms', 'ssr')}
         if components != previous['components']:

@@ -25,6 +25,28 @@ fixture = load('test-provenance-candidate')
 
 
 class LocalTargetTests(unittest.TestCase):
+    def test_reviewed_base_transition_is_bound_to_exact_git_objects(self):
+        previous, source = mod.REVIEWED_BASELINE, mod.REVIEWED_TRANSITION
+        changed = list(mod.REVIEWED_BASE_FILES)
+        def git(*args):
+            if args[0] == 'merge-base':
+                return ''
+            if args[0] == 'ls-tree':
+                return ''
+            revision, path = args[1].split(':', 1)
+            return mod.REVIEWED_BASE_FILES[path][0 if revision == previous else 1]
+        self.assertTrue(mod.reviewed_base_transition(git, previous, source, changed))
+        self.assertFalse(mod.reviewed_base_transition(git, 'a' * 40, source, changed))
+        self.assertFalse(mod.reviewed_base_transition(git, previous, source, changed + ['cms/schema.js']))
+        def changed_blob(*args):
+            return '0' * 40 if args[0] == 'rev-parse' else git(*args)
+        self.assertFalse(mod.reviewed_base_transition(changed_blob, previous, source, changed))
+        def unrelated(*args):
+            if args[0] == 'merge-base':
+                raise subprocess.CalledProcessError(1, args)
+            return git(*args)
+        self.assertFalse(mod.reviewed_base_transition(unrelated, previous, source, changed))
+
     def test_optimized_python_still_rejects_wrong_local_host(self):
         if socket.gethostname() == 'hyqaq-imini':
             self.skipTest('negative test requires a non-target host')
