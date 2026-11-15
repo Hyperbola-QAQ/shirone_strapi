@@ -50,9 +50,11 @@ class RunnerWorkflowTests(unittest.TestCase):
         self.assertEqual(self.build['on']['push']['paths-ignore'], ['deploy/k8s/**'])
         self.assertEqual(self.doc['concurrency']['cancel-in-progress'], 'false')
 
-    def test_installed_manual_workflow_uses_the_same_main_only_fetch(self):
+    def test_installed_workflows_match_the_reviewed_candidates(self):
         installed = yaml.load((HERE.parent.parent / '.github/workflows/shirone-runner-deploy.yml').read_text(), Loader=yaml.BaseLoader)
-        self.assertEqual(set(installed['on']), {'workflow_dispatch'})
+        installed_build = yaml.load((HERE.parent.parent / '.github/workflows/shirone-release.yml').read_text(), Loader=yaml.BaseLoader)
+        self.assertEqual(installed, self.doc)
+        self.assertEqual(installed_build, self.build)
         steps = installed['jobs']['deploy']['steps']
         self.assertEqual(steps[0]['with']['fetch-depth'], '1')
         self.assertEqual(steps[0]['with']['persist-credentials'], 'false')

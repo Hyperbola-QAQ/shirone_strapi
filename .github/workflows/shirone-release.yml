@@ -1,8 +1,11 @@
-# Manual validation only: no production access or automatic deployment.
-# Hosted full-size capacity, signed promotion and rollback remain unverified.
+# Build and sign on main pushes; image-only deployment commits do not rebuild.
 name: Shirone encrypted release validation
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - deploy/k8s/**
 permissions: {}
 concurrency:
   group: shirone-encrypted-release
