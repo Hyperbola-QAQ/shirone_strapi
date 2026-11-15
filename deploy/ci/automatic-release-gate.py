@@ -24,7 +24,7 @@ API_SPEC = importlib.util.spec_from_file_location('safe_github_api', HERE / 'git
 api = importlib.util.module_from_spec(API_SPEC)
 API_SPEC.loader.exec_module(api)
 ApiUnavailable = api.ApiUnavailable
-REPO = 'Hyperbola-QAQ/Shirone-Strapi'
+REPO = 'Hyperbola-QAQ/shirone_strapi'
 SHA = re.compile(r'^[0-9a-f]{40}$')
 DIGEST = re.compile(r'^sha256:[0-9a-f]{64}$')
 

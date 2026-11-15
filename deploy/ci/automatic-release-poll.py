@@ -19,7 +19,7 @@ spec = importlib.util.spec_from_file_location('release_controller', HERE / 'auto
 controller = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(controller)
 SHA = re.compile(r'[0-9a-f]{40}')
-ORIGIN = 'git@github.com:Hyperbola-QAQ/Shirone-Strapi.git'
+ORIGIN = 'git@github.com:Hyperbola-QAQ/shirone_strapi.git'
 
 
 def git(checkout, *args):
@@ -112,7 +112,7 @@ def poll(checkout, state, key, recipient_file, previous_record):
         # Restart on a later poll instead of executing a mixed source version.
         if head != original_head:
             return 'checkout updated; retry next poll'
-        response = controller.gate.gh('repos/Hyperbola-QAQ/Shirone-Strapi/actions/workflows/shirone-release.yml/runs?branch=main&status=success&per_page=100')
+        response = controller.gate.gh('repos/Hyperbola-QAQ/shirone_strapi/actions/workflows/shirone-release.yml/runs?branch=main&status=success&per_page=100')
         run_id = eligible_run(response, head)
         if run_id is None:
             return 'no matching release'

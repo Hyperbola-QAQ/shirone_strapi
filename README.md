@@ -1,4 +1,4 @@
-# Shirone-Strapi
+# shirone_strapi
 
 基于 `shirones@0.1.5` 的 Astro 混合渲染站点，使用 Strapi 5 管理文章并由 Meilisearch 提供搜索。内容路由从服务端读取已发布内容，后台编辑后不需要重新构建站点。目前已部署到 `hyperbola.cc`。
 

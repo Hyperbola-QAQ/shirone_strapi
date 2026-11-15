@@ -65,6 +65,12 @@ def reviewed_base_transition(git, previous, source, changed):
     return True
 
 
+def project_name_only(old_package, new_package):
+    old_name = '"name": "shirone-strapi"'
+    return (old_package.count(old_name) == 1 and
+            new_package == old_package.replace(old_name, '"name": "shirone_strapi"', 1))
+
+
 def command(*args, cwd=None, env=None):
     return subprocess.run(args, cwd=cwd, env=env, check=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True).stdout
 
@@ -196,8 +202,14 @@ class Adapter:
                             'deploy/ci/rebuild-hosted-bases-candidate.sh',
                             'deploy/ci/Dockerfile.node-reconstruction-candidate',
                             'deploy/ci/pull-hosted-base.sh')
-        if changed and not reviewed_base_transition(self._git, previous['source'],
-                                                    admission['source'], changed.splitlines()):
+        changed_paths = changed.splitlines()
+        if 'package.json' in changed_paths:
+            old_package = self._git('show', f"{previous['source']}:package.json")
+            new_package = self._git('show', f"{admission['source']}:package.json")
+            if project_name_only(old_package, new_package):
+                changed_paths.remove('package.json')
+        if changed_paths and not reviewed_base_transition(self._git, previous['source'],
+                                                          admission['source'], changed_paths):
             raise ValueError('CMS changed; automatic rollback compatibility is not established')
         components = {name: self._live(name) for name in ('cms', 'ssr')}
         if components != previous['components']:

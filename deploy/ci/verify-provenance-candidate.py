@@ -13,7 +13,7 @@ import sys
 
 import yaml
 
-REPO = 'Hyperbola-QAQ/Shirone-Strapi'
+REPO = 'Hyperbola-QAQ/shirone_strapi'
 WORKFLOW = REPO + '/.github/workflows/shirone-release.yml'
 HASH = re.compile(r'^[0-9a-f]{40}$')
 DIGEST = re.compile(r'^sha256:[0-9a-f]{64}$')

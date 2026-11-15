@@ -342,8 +342,8 @@ reviewing an actual signer workflow and obtaining an authenticated OCI image:
 
 ```sh
 gh attestation verify 'oci://REGISTRY/IMAGE@sha256:DIGEST' \
-  --repo Hyperbola-QAQ/Shirone-Strapi \
-  --signer-workflow Hyperbola-QAQ/Shirone-Strapi/.github/workflows/REVIEWED.yml \
+  --repo Hyperbola-QAQ/shirone_strapi \
+  --signer-workflow Hyperbola-QAQ/shirone_strapi/.github/workflows/REVIEWED.yml \
   --source-ref refs/heads/main --source-digest REVIEWED_COMMIT \
   --signer-digest REVIEWED_WORKFLOW_COMMIT --deny-self-hosted-runners
 ```

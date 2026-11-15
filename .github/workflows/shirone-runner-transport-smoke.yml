@@ -5,7 +5,7 @@ on:
 permissions: {}
 jobs:
   make_synthetic_artifact:
-    if: github.repository == 'Hyperbola-QAQ/Shirone-Strapi' && github.ref == 'refs/heads/main'
+    if: github.repository == 'Hyperbola-QAQ/shirone_strapi' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions: {}
@@ -26,7 +26,7 @@ jobs:
           retention-days: 1
   verify_on_imini:
     needs: make_synthetic_artifact
-    if: github.repository == 'Hyperbola-QAQ/Shirone-Strapi' && github.ref == 'refs/heads/main'
+    if: github.repository == 'Hyperbola-QAQ/shirone_strapi' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, shirone-smoke-imini]
     timeout-minutes: 10
     permissions:

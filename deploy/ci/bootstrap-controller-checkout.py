@@ -13,8 +13,8 @@ import stat
 import subprocess
 import tempfile
 
-PUBLIC_URL = 'https://github.com/Hyperbola-QAQ/Shirone-Strapi.git'
-PUSH_URL = 'git@github.com:Hyperbola-QAQ/Shirone-Strapi.git'
+PUBLIC_URL = 'https://github.com/Hyperbola-QAQ/shirone_strapi.git'
+PUSH_URL = 'git@github.com:Hyperbola-QAQ/shirone_strapi.git'
 SHA = re.compile(r'^[0-9a-f]{40}$')
 
 

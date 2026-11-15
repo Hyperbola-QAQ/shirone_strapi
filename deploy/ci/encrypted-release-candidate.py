@@ -20,7 +20,7 @@ HERE = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location('release_envelope', HERE / 'release-envelope-candidate.py')
 envelope = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(envelope)
-REPO = 'Hyperbola-QAQ/Shirone-Strapi'
+REPO = 'Hyperbola-QAQ/shirone_strapi'
 WORKFLOW = REPO + '/.github/workflows/shirone-release.yml'
 RECIPIENT = re.compile(r'^age1[023456789acdefghjklmnpqrstuvwxyz]{58}$')
 MAX_CIPHERTEXT = envelope.MAX_TOTAL + 128 * 1024 * 1024

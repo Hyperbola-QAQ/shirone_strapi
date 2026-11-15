@@ -68,7 +68,7 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         args = (self.root / 'gh-args').read_text().splitlines()
         self.assertIn('--deny-self-hosted-runners', args)
-        self.assertIn('Hyperbola-QAQ/Shirone-Strapi/.github/workflows/shirone-release.yml', args)
+        self.assertIn('Hyperbola-QAQ/shirone_strapi/.github/workflows/shirone-release.yml', args)
         self.assertIn('oci://ghcr.io/hyperbola-qaq/shirone-cms@' + NEW, args)
         self.assertEqual(args[args.index('--source-digest') + 1], self.source)
         self.assertEqual(args[args.index('--signer-digest') + 1], self.source)

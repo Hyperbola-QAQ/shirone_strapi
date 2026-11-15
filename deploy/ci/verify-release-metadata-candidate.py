@@ -16,7 +16,7 @@ import sys
 
 COMMIT = re.compile(r'^[0-9a-f]{40}$')
 DIGEST = re.compile(r'^sha256:[0-9a-f]{64}$')
-REPO = 'Hyperbola-QAQ/Shirone-Strapi'
+REPO = 'Hyperbola-QAQ/shirone_strapi'
 WORKFLOW = REPO + '/.github/workflows/shirone-release.yml'
 
 

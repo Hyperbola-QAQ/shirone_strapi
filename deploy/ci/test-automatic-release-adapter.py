@@ -25,6 +25,13 @@ fixture = load('test-provenance-candidate')
 
 
 class LocalTargetTests(unittest.TestCase):
+    def test_project_name_only_accepts_no_other_package_change(self):
+        old = '{"name": "shirone-strapi", "version": "1"}'
+        new = '{"name": "shirone_strapi", "version": "1"}'
+        self.assertTrue(mod.project_name_only(old, new))
+        self.assertFalse(mod.project_name_only(old, new.replace('"1"', '"2"')))
+        self.assertFalse(mod.project_name_only(old, old))
+
     def test_reviewed_base_transition_is_bound_to_exact_git_objects(self):
         previous, source = mod.REVIEWED_BASELINE, mod.REVIEWED_TRANSITION
         changed = list(mod.REVIEWED_BASE_FILES)

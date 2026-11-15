@@ -20,11 +20,11 @@ class RunnerWorkflowTests(unittest.TestCase):
         self.assertEqual(event['types'], ['completed'])
         self.assertEqual(event['branches'], ['main'])
         condition = self.doc['jobs']['deploy']['if']
-        for part in ("github.repository == 'Hyperbola-QAQ/Shirone-Strapi'",
+        for part in ("github.repository == 'Hyperbola-QAQ/shirone_strapi'",
                      "github.ref == 'refs/heads/main'",
                      "github.event.workflow_run.conclusion == 'success'",
                      "github.event.workflow_run.head_branch == 'main'",
-                     "github.event.workflow_run.head_repository.full_name == 'Hyperbola-QAQ/Shirone-Strapi'",
+                     "github.event.workflow_run.head_repository.full_name == 'Hyperbola-QAQ/shirone_strapi'",
                      'github.event.workflow_run.head_sha == github.sha',
                      "github.event.workflow_run.event == 'push'",
                      "github.event.workflow_run.event == 'workflow_dispatch'"):
@@ -41,7 +41,7 @@ class RunnerWorkflowTests(unittest.TestCase):
         command = job['steps'][1]['run']
         self.assertIn('[[ "$RELEASE_RUN_ID" =~ ^[1-9][0-9]*$ ]]', command)
         self.assertIn('--run-id "$RELEASE_RUN_ID"', command)
-        self.assertIn('gh api repos/Hyperbola-QAQ/Shirone-Strapi/git/ref/heads/main', command)
+        self.assertIn('gh api repos/Hyperbola-QAQ/shirone_strapi/git/ref/heads/main', command)
         self.assertIn('bash deploy/ci/fetch-main-history.sh "$GITHUB_SHA"', command)
         self.assertIn('automatic-release-controller.py --isolated-test-only', command)
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 : "${GH_TOKEN:?}" "${GITHUB_SHA:?}" "${GITHUB_OUTPUT:?}" "${RUNNER_TEMP:?}" "${DOCKER_CONFIG:?}"
-[[ "${GITHUB_REPOSITORY:-}" == Hyperbola-QAQ/Shirone-Strapi && "${GITHUB_REF:-}" == refs/heads/main ]] || exit 2
+[[ "${GITHUB_REPOSITORY:-}" == Hyperbola-QAQ/shirone_strapi && "${GITHUB_REF:-}" == refs/heads/main ]] || exit 2
 [[ "$GITHUB_SHA" =~ ^[0-9a-f]{40}$ && "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]] || exit 2
-remote_sha=$(gh api 'repos/Hyperbola-QAQ/Shirone-Strapi/git/ref/heads/main' --jq .object.sha)
+remote_sha=$(gh api 'repos/Hyperbola-QAQ/shirone_strapi/git/ref/heads/main' --jq .object.sha)
 [[ "$remote_sha" == "$GITHUB_SHA" ]] || { echo 'main changed; dispatch a new reviewed run' >&2; exit 1; }
 [[ "$DOCKER_CONFIG" == "$RUNNER_TEMP/"* && "$RUNNER_TEMP" == /* ]] || exit 2
 mkdir -m 700 -p "$DOCKER_CONFIG"

@@ -22,7 +22,7 @@ function withMocks(run) {
     })) writeFileSync(path.join(dir, name), body, { mode: 0o700 });
     const env = {
       PATH: `${dir}:/usr/bin:/bin`, HOME: dir, GH_TOKEN: 'synthetic',
-      GITHUB_SHA: sha, GITHUB_REPOSITORY: 'Hyperbola-QAQ/Shirone-Strapi',
+      GITHUB_SHA: sha, GITHUB_REPOSITORY: 'Hyperbola-QAQ/shirone_strapi',
       GITHUB_REF: 'refs/heads/main', GITHUB_ACTOR: 'synthetic',
       GITHUB_OUTPUT: path.join(dir, 'output'), RUNNER_TEMP: dir,
       DOCKER_CONFIG: path.join(dir, 'docker-config'), MOCK_GIT_SHA: sha,

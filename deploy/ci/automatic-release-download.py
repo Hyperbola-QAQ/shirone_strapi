@@ -19,7 +19,7 @@ import urllib.parse
 import urllib.request
 import zipfile
 
-REPO = 'Hyperbola-QAQ/Shirone-Strapi'
+REPO = 'Hyperbola-QAQ/shirone_strapi'
 MAX_ARCHIVE = 4 * 1024 * 1024 * 1024
 CHUNK = 16 * 1024 * 1024
 WORKERS = 6
