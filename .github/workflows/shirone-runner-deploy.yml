@@ -21,6 +21,9 @@ jobs:
       attestations: read
       contents: write
     env:
+      HTTP_PROXY: http://192.168.86.102:7897
+      HTTPS_PROXY: http://192.168.86.102:7897
+      NO_PROXY: localhost,127.0.0.1,192.168.86.0/24,.svc,.cluster.local,hyperbola.cc,.hyperbola.cc
       GH_TOKEN: ${{ github.token }}
       RELEASE_RUN_ID: ${{ inputs.release_run_id }}
       SHIRONE_CONTROLLER_LOCAL: '1'
