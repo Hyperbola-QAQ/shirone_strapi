@@ -22,6 +22,8 @@ Strapi 以 Markdown 和原 frontmatter 保存内容；仅发布的内容会被�
 
 旧站内容迁移入口及 dry-run 说明在 [cms/README.md](cms/README.md)；生产部署、回退和数据恢复说明见 [deploy/k8s/README.md](deploy/k8s/README.md) 与 [deploy/k8s/RECOVERY.md](deploy/k8s/RECOVERY.md)。按站点所有者要求，当前没有自动应用备份。
 
+四项基础功能的验收结果见 [项目交接记录](docs/HANDOFF.md)。本机 Obsidian 写作、草稿与发布流程见 [Obsidian 写作说明](docs/obsidian-strapi.md)。
+
 Shirone 的路由和运行时适配保存在 [patches/shirones@0.1.5.patch](patches/shirones@0.1.5.patch)，升级主题时需重新验证补丁。中文字体按 Unicode 范围分片，生成方法见 [字体说明](src/assets/fonts/yozai-shards/README.md)。
 
 ### 受保护媒体浏览器回归

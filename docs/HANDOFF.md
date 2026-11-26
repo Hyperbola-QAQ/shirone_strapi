@@ -17,4 +17,4 @@
 
 ## 后续交付
 
-原计划四项均已通过。验收时，主仓库的 Obsidian 写作说明和管理员令牌初始化工具仍是本地文件。下一项是把这两个入口纳入版本管理，并从干净检出验证后台工具与独立插件。桌面插件以 [shirone_strapi_obsidian](https://github.com/Hyperbola-QAQ/shirone_strapi_obsidian) 为维护仓库。
+原计划四项均已通过。后续的写作工具交付也已完成。从主仓库干净检出运行 `node --test cms/tests/obsidian-token.test.mjs`，令牌权限、文件保护及重复运行测试通过（1/1）。在独立插件仓库提交 `48a4951` 的干净检出中，按锁文件安装依赖后运行 `pnpm test`，6/6 通过。后台管理入口与桌面安装步骤见[写作接入说明](obsidian-strapi.md)。
