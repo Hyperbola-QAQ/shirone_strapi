@@ -14,8 +14,8 @@ jobs:
       attestations: read
       contents: write
     env:
-      HTTP_PROXY: http://192.168.86.102:7897
-      HTTPS_PROXY: http://192.168.86.102:7897
+      HTTP_PROXY: http://127.0.0.1:37897
+      HTTPS_PROXY: http://127.0.0.1:37897
       NO_PROXY: localhost,127.0.0.1,192.168.86.0/24,.svc,.cluster.local,hyperbola.cc,.hyperbola.cc
       GH_TOKEN: ${{ github.token }}
       PYTHONDONTWRITEBYTECODE: "1"

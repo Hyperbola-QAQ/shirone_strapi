@@ -9,6 +9,7 @@ root = Path.cwd()
 ci = root / "deploy/ci"
 state = Path("/home/github-actions/.local/state/shirone-release")
 baseline = "a910d7771b32c78a854a2c774d9bac00faf3aeb0"
+drill_parent = "b25bd4cbba5253a0fbf99474c2daaac7ead9f90d"
 current_source = "f5e75a6a0d8914fd3a23934bef56ae900544869a"
 older_source = "79dda4c4376325136d4934ff71441c8f401fce9b"
 older_manifest = "e59d883cfb6bae76363da25dc6fb9d7be6cefa3c"
@@ -48,12 +49,12 @@ with lock_class(state):
     recovering = marker.exists()
     if recovering:
         origin = marker.read_text().strip()
-        require(ops.git(root, "rev-parse", origin + "^") == baseline, "Unknown drill origin")
+        require(ops.git(root, "rev-parse", origin + "^") == drill_parent, "Unknown drill origin")
         subprocess.run(["git", "merge-base", "--is-ancestor", origin, head], check=True)
         changes = ops.git(root, "diff", "--name-only", origin, head).splitlines()
         require(set(changes) <= {"deploy/k8s/cms.yaml", "deploy/k8s/ssr.yaml"}, "Unexpected changes since drill")
     else:
-        require(ops.git(root, "rev-parse", head + "^") == baseline, "Unexpected release baseline")
+        require(ops.git(root, "rev-parse", head + "^") == drill_parent, "Unexpected release baseline")
     older = logged_release(43666801073)
     require(older["previous_source"] == older_source and older["source"] == current_source and older["rollback_safe"], "Unexpected prior pair")
     current = json.loads((state / "previous-release.json").read_text())
