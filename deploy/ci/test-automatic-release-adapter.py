@@ -434,9 +434,12 @@ class RealGitAdapterTests(unittest.TestCase):
     def test_preview_uses_both_reviewed_playbooks_after_verified_envelope(self):
         destination = self.f.repo / 'deploy/ansible'
         destination.mkdir(parents=True)
-        ops = Path('/home/hyperbola/Work/ansible-debian-k8s')
+        ops = self.f.root / 'managed-playbooks'
+        ops.mkdir()
         for name in ('cms', 'ssr'):
-            shutil.copyfile(ops / f'update_shirone_{name}_image.yml', destination / f'update-{name}-image.yml')
+            reviewed = Path(__file__).resolve().parents[1] / 'ansible' / f'update-{name}-image.yml'
+            shutil.copyfile(reviewed, ops / f'update_shirone_{name}_image.yml')
+            shutil.copyfile(reviewed, destination / reviewed.name)
         calls = []
         def command(*args, **kwargs):
             calls.append(args[0])
@@ -444,7 +447,8 @@ class RealGitAdapterTests(unittest.TestCase):
         admission = {'source': self.source, 'signer': self.source, 'ciphertext_digest': 'sha256:' + 'f' * 64,
                      'manifests': self.targets}
         self.adapter.head = self.source
-        with patch.object(mod, 'command', side_effect=command), \
+        with patch.object(mod, 'controller_ops', return_value=ops), \
+             patch.object(mod, 'command', side_effect=command), \
              patch.object(mod.promotion.crypto, 'decrypt') as decrypt, \
              patch.object(mod.promotion.crypto, 'recipient_fingerprint', return_value='fingerprint'), \
              patch.object(mod.promotion.env, 'inspect') as inspect:

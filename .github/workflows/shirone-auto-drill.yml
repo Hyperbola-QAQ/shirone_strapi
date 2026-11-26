@@ -1,0 +1,71 @@
+name: Shirone automatic rollback rehearsal
+on: workflow_dispatch
+permissions: {}
+concurrency:
+  group: shirone-production-release
+  cancel-in-progress: false
+jobs:
+  drill:
+    if: github.repository == 'Hyperbola-QAQ/shirone_strapi' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, linux, shirone-deploy-imini]
+    timeout-minutes: 120
+    permissions:
+      actions: read
+      attestations: read
+      contents: write
+    env:
+      HTTP_PROXY: http://127.0.0.1:37897
+      HTTPS_PROXY: http://127.0.0.1:37897
+      NO_PROXY: localhost,127.0.0.1,192.168.86.0/24,.svc,.cluster.local,hyperbola.cc,.hyperbola.cc
+      GH_TOKEN: ${{ github.token }}
+      PYTHONDONTWRITEBYTECODE: "1"
+      SHIRONE_CONTROLLER_LOCAL: '1'
+      SHIRONE_CONTROLLER_RUNNER: '1'
+      PYTHONPATH: /home/github-actions/.local/share/shirone-release/tools/root/usr/lib/python3/dist-packages
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify runner and run reviewed release controller
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          tools=/home/github-actions/.local/share/shirone-release/tools/bin
+          export PATH="$tools:/usr/local/bin:/usr/bin:/bin"
+          [[ "$(hostname)" == hyqaq-imini && "$(id -un)" == github-actions ]]
+          [[ "$GITHUB_SHA" =~ ^[0-9a-f]{40}$ && "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]
+          [[ "$(gh api repos/Hyperbola-QAQ/shirone_strapi/git/ref/heads/main --jq .object.sha)" == "$GITHUB_SHA" ]]
+          bash deploy/ci/fetch-main-history.sh "$GITHUB_SHA"
+          git checkout -B main "$GITHUB_SHA"
+          git config --local user.name 'Shirone release automation'
+          git config --local user.email 'shirone-release@users.noreply.github.com'
+          temp=$(mktemp -d "$RUNNER_TEMP/shirone-git-auth.XXXXXXXX")
+          trap 'rm -rf -- "$temp"' EXIT
+          cat > "$temp/askpass" <<'ASKPASS'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' x-access-token ;;
+            *Password*) printf '%s\n' "$GH_TOKEN" ;;
+            *) exit 1 ;;
+          esac
+          ASKPASS
+          chmod 700 "$temp/askpass"
+          export GIT_ASKPASS="$temp/askpass" GIT_TERMINAL_PROMPT=0
+          mkdir "$temp/bin"
+          cat > "$temp/bin/git" <<'GIT'
+          #!/bin/bash
+          args=("$@")
+          if [[ ${1:-} == -C ]]; then shift 2; fi
+          if [[ ${1:-} == ls-remote ]]; then
+            for delay in 1 2 4; do
+              /usr/bin/git "${args[@]}" && exit 0
+              sleep "$delay"
+            done
+          fi
+          exec /usr/bin/git "${args[@]}"
+          GIT
+          chmod 700 "$temp/bin/git"
+          export PATH="$temp/bin:$PATH"
+          python3 deploy/ci/automatic-rollback-drill.py
