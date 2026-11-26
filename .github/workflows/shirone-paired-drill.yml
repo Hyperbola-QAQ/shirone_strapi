@@ -53,4 +53,19 @@ jobs:
           ASKPASS
           chmod 700 "$temp/askpass"
           export GIT_ASKPASS="$temp/askpass" GIT_TERMINAL_PROMPT=0
+          mkdir "$temp/bin"
+          cat > "$temp/bin/git" <<'GIT'
+          #!/bin/bash
+          args=("$@")
+          if [[ ${1:-} == -C ]]; then shift 2; fi
+          if [[ ${1:-} == ls-remote ]]; then
+            for delay in 1 2 4; do
+              /usr/bin/git "${args[@]}" && exit 0
+              sleep "$delay"
+            done
+          fi
+          exec /usr/bin/git "${args[@]}"
+          GIT
+          chmod 700 "$temp/bin/git"
+          export PATH="$temp/bin:$PATH"
           python3 deploy/ci/paired-recovery-drill.py
